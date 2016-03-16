@@ -1,0 +1,50 @@
+build:
+  box: alpine
+  cmd: /bin/sh
+  steps:
+    - script:
+       name: build our app
+       code: echo "building our base image!" > base.txt
+build-base:
+  box: alpine
+  cmd: /bin/sh
+  steps:
+    - script:
+       name: build our app
+       code: echo "building our base image!" > base.txt
+push-base:
+  box: alpine
+  steps:
+    - internal/docker-push:
+      username: $DOCKER_USERNAME
+      password: $DOCKER_PASSWORD
+      repository: tonnu/base
+      cmd: cat /pipeline/source/base.txt
+build-dev:
+  box: tonnu/base
+  steps:
+    - script:
+      name: build the dev version
+      script: echo "installing dev deps!" > dev.txt
+push-dev:
+  box: tonnu/base
+  steps:
+    - internal/docker-push:
+      username: $DOCKER_USERNAME
+      password: $DOCKER_PASSWORD
+      repository: tonnu/dev
+      cmd: cat /pipeline/source/dev.txt
+build-prod:
+  box: tonnu/base
+  steps:
+    - script:
+      name: build the prod version
+      script: echo "building for prod!" > prod.txt
+push-prod:
+  box: tonnu/base
+  steps:
+    - internal/docker-push:
+      username: $DOCKER_USERNAME
+      password: $DOCKER_PASSWORD
+      repository: tonnu/prod
+      cmd: cat /pipeline/source/prod.txt
