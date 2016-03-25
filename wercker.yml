@@ -4,7 +4,7 @@ build-base:
   steps:
     - script:
        name: build our app
-       code: echo "building our base image!" > base.txt
+       code: echo "building our base image! hurrah!" > base.txt
 
 push-base:
   box:
