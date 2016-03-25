@@ -1,50 +1,69 @@
-build:
-  box: alpine
-  cmd: /bin/sh
-  steps:
-    - script:
-       name: build our app
-       code: echo "building our base image!" > base.txt
 build-base:
-  box: alpine
-  cmd: /bin/sh
+  box:
+    id: ubuntu
   steps:
     - script:
        name: build our app
        code: echo "building our base image!" > base.txt
+
 push-base:
-  box: alpine
+  box:
+    id: ubuntu
   steps:
     - internal/docker-push:
       username: $DOCKER_USERNAME
       password: $DOCKER_PASSWORD
-      repository: tonnu/base
+      registry: https://quay.io
+      repository: quay.io/wercker/workflows-base
       cmd: cat /pipeline/source/base.txt
+
 build-dev:
-  box: tonnu/base
+  box:
+    id: quay.io/wercker/workflows-base
+    username: $DOCKER_PULLER_USERNAME
+    password: $DOCKER_PULLER_PASSWORD
+    registry: https://quay.io
   steps:
     - script:
       name: build the dev version
       script: echo "installing dev deps!" > dev.txt
+
 push-dev:
-  box: tonnu/base
+  box:
+    id: quay.io/wercker/workflows-base
+    username: $DOCKER_PULLER_USERNAME
+    password: $DOCKER_PULLER_PASSWORD
+    registry: https://quay.io
   steps:
     - internal/docker-push:
       username: $DOCKER_USERNAME
       password: $DOCKER_PASSWORD
-      repository: tonnu/dev
+      registry: https://quay.io
+      repository: quay.io/wercker/workflows-dev
       cmd: cat /pipeline/source/dev.txt
+
 build-prod:
-  box: tonnu/base
+  box:
+    id: quay.io/wercker/workflows-base
+    username: $DOCKER_PULLER_USERNAME
+    password: $DOCKER_PULLER_PASSWORD
+    registry: https://quay.io
   steps:
     - script:
       name: build the prod version
       script: echo "building for prod!" > prod.txt
+
 push-prod:
-  box: tonnu/base
+  box:
+    id: quay.io/wercker/workflows-base
+    username: $DOCKER_PULLER_USERNAME
+    password: $DOCKER_PULLER_PASSWORD
+    registry: https://quay.io
   steps:
     - internal/docker-push:
       username: $DOCKER_USERNAME
       password: $DOCKER_PASSWORD
-      repository: tonnu/prod
+      registry: https://quay.io
+      repository: quay.io/wercker/workflows-prod
       cmd: cat /pipeline/source/prod.txt
+
